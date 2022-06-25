@@ -1,0 +1,4 @@
+*.json
+*.csv
+.DS_Store
+.py_cache
