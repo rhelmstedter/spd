@@ -14,16 +14,28 @@ cli = typer.Typer()
 
 @cli.command()
 def write_csv(
+    location: Path = typer.Option(
+        CWD,
+        "--location",
+        "-L",
+        help="Directory file to read and write from if not cwd"
+    ),
     json_file: str = typer.Option(
-        "student_data.json", "--json", "-J", help="Json file to read"
+        "student_data.json",
+        "--json",
+        "-J",
+        help="Json file to read"
     ),
     csv_file: str = typer.Option(
-        "student_data.csv", "--csv", "-C", help="Csv file to write"
+        "student_data.csv",
+        "--csv",
+        "-C",
+        help="Csv file to write"
     ),
 ) -> None:
     """Writes a csv file based on the json data from PyBites"""
-    json_path = CWD / json_file
-    csv_path = CWD / csv_file
+    json_path = location.resolve() / json_file
+    csv_path = location.resolve() / csv_file
     if csv_path.is_file():
         print(f"[yellow]:warning: File already exists @ {csv_file}.")
         if not Confirm.ask("Do you want to overwrite the file?"):
@@ -40,6 +52,12 @@ def write_csv(
 
 @cli.command()
 def plot(
+    location: Path = typer.Option(
+        CWD,
+        "--location",
+        "-L",
+        help="Directory file to read csv if not cwd"
+    ),
     csv_file: str = typer.Option(
         "student_data.csv",
         "--csv",
@@ -55,21 +73,8 @@ def plot(
     ),
 ) -> None:
     """Plots average number of bites completed by class"""
-    csv_path = CWD / csv_file
-    df = pd.read_csv(csv_path)
-    data = (
-        df.where(df.class_ != "DEA")
-        .assign(
-            total_completed=lambda x:
-            x.newbie_completed
-            + x.intro_completed
-            + x.regular_completed
-        )
-        .groupby(["class_"])
-        .mean()
-        .reset_index()
-        .round(0)
-    )
+    csv_path = location.resolve() / csv_file
+    data = clean_data(csv_path)
     if sort:
         data = data.sort_values("total_completed", ascending=True).reset_index()
 
@@ -79,6 +84,22 @@ def plot(
     plt.title("Average Bites completed by class")
     plt.xlim(0, 33)
     plt.show()
+
+
+def clean_data(csv_path):
+    df = pd.read_csv(csv_path)
+    return (
+        df.where(df.class_ != "DEA")
+        .assign(
+            total_completed=lambda x: x.newbie_completed
+            + x.intro_completed
+            + x.regular_completed
+        )
+        .groupby(["class_"])
+        .mean()
+        .reset_index()
+        .round(1)
+    )
 
 
 if __name__ == "__main__":
