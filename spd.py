@@ -18,27 +18,28 @@ def write_csv(
         CWD,
         "--location",
         "-L",
-        help="Directory file to read and write from if not cwd"
+        help="Directory to read and write from. Default: cwd",
     ),
     json_file: str = typer.Option(
         "student_data.json",
         "--json",
         "-J",
-        help="Json file to read"
+        help="Json file to read. Default: student_data.json",
     ),
     csv_file: str = typer.Option(
         "student_data.csv",
         "--csv",
         "-C",
-        help="Csv file to write"
+        help="Csv file to write. Default: student_data.csv",
     ),
 ) -> None:
-    """Writes a csv file based on the json data from PyBites"""
+    """Writes a csv file based on the json data from PyBites."""
     json_path = location.resolve() / json_file
     csv_path = location.resolve() / csv_file
     if csv_path.is_file():
         print(f"[yellow]:warning: File already exists @ {csv_file}.")
         if not Confirm.ask("Do you want to overwrite the file?"):
+            print("Exiting without creating a csv.")
             return
     with open(json_path) as f:
         data = json.load(f)
@@ -86,7 +87,12 @@ def plot(
     plt.show()
 
 
-def clean_data(csv_path):
+def clean_data(csv_path: Path) -> pd.DataFrame:
+    """Creates a pandas DataFrame from a csv file.
+
+    :csv_path: Path to csv file
+    :returns: pd.DataFrame
+    """
     df = pd.read_csv(csv_path)
     return (
         df.where(df.class_ != "DEA")
