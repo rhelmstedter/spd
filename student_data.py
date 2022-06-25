@@ -50,7 +50,14 @@ def plot(
         "--csv",
         "-C",
         help="Csv file to read",
-    )
+    ),
+    sort: bool = typer.Option(
+        False,
+        "--sort",
+        "-S",
+        is_flag=True,
+        help="Sort by total bites completed instead of class"
+    ),
 ) -> None:
     """Plots average number of bites completed by class"""
     csv_path = CWD / csv_file
@@ -67,6 +74,8 @@ def plot(
         .reset_index()
         .round(0)
     )
+    if sort:
+        data = data.sort_values('total_completed', ascending=True).reset_index()
 
     plt.bar(data.class_, data.total_completed, orientation="h", width=0.3, marker="fhd")
     plt.theme("pro")
