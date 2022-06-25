@@ -1,6 +1,7 @@
-import json
 import csv
+import json
 from pathlib import Path
+
 import pandas as pd
 import plotext as plt
 import typer
@@ -14,16 +15,10 @@ cli = typer.Typer()
 @cli.command()
 def write_csv(
     json_file: str = typer.Option(
-        "student_data.json",
-        "--json",
-        "-J",
-        help="Json file to read"
+        "student_data.json", "--json", "-J", help="Json file to read"
     ),
     csv_file: str = typer.Option(
-        "student_data.csv",
-        "--csv",
-        "-C",
-        help="Csv file to write"
+        "student_data.csv", "--csv", "-C", help="Csv file to write"
     ),
 ) -> None:
     """Writes a csv file based on the json data from PyBites"""
@@ -56,7 +51,7 @@ def plot(
         "--sort",
         "-S",
         is_flag=True,
-        help="Sort by total bites completed instead of class"
+        help="Sort by total bites completed instead of class",
     ),
 ) -> None:
     """Plots average number of bites completed by class"""
@@ -65,7 +60,8 @@ def plot(
     data = (
         df.where(df.class_ != "DEA")
         .assign(
-            total_completed=lambda x: x.newbie_completed
+            total_completed=lambda x:
+            x.newbie_completed
             + x.intro_completed
             + x.regular_completed
         )
@@ -75,7 +71,7 @@ def plot(
         .round(0)
     )
     if sort:
-        data = data.sort_values('total_completed', ascending=True).reset_index()
+        data = data.sort_values("total_completed", ascending=True).reset_index()
 
     plt.bar(data.class_, data.total_completed, orientation="h", width=0.3, marker="fhd")
     plt.theme("pro")
