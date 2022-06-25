@@ -54,10 +54,7 @@ def write_csv(
 @cli.command()
 def plot(
     location: Path = typer.Option(
-        CWD,
-        "--location",
-        "-L",
-        help="Directory file to read csv if not cwd"
+        CWD, "--location", "-L", help="Directory file to read csv if not cwd"
     ),
     csv_file: str = typer.Option(
         "student_data.csv",
@@ -65,9 +62,9 @@ def plot(
         "-C",
         help="Csv file to read",
     ),
-    sort: bool = typer.Option(
+    sort_by_total: bool = typer.Option(
         False,
-        "--sort",
+        "--sort-by-total",
         "-S",
         is_flag=True,
         help="Sort by total bites completed instead of class",
@@ -76,14 +73,53 @@ def plot(
     """Plots average number of bites completed by class"""
     csv_path = location.resolve() / csv_file
     data = clean_data(csv_path)
-    if sort:
+    if sort_by_total:
         data = data.sort_values("total_completed", ascending=True).reset_index()
+    else:
+        data = data.sort_values("class_", ascending=False).reset_index()
 
     plt.bar(data.class_, data.total_completed, orientation="h", width=0.3, marker="fhd")
     plt.theme("pro")
     plt.plot_size(75, (2 * len(data.class_) - 1) + 4)
     plt.title("Average Bites completed by class")
-    plt.xlim(0, 33)
+    plt.xlim(0, max(data.total_completed) * 1.1)
+    plt.show()
+
+
+@cli.command()
+def stacked(
+    location: Path = typer.Option(
+        CWD, "--location", "-L", help="Directory file to read csv if not cwd"
+    ),
+    csv_file: str = typer.Option(
+        "student_data.csv",
+        "--csv",
+        "-C",
+        help="Csv file to read",
+    ),
+    sort_by_total: bool = typer.Option(
+        False,
+        "--sort-by-total",
+        "-S",
+        is_flag=True,
+        help="Sort by total bites completed instead of class",
+    ),
+) -> None:
+    """Plots average number of bites completed by class"""
+    csv_path = location.resolve() / csv_file
+    data = clean_data(csv_path)
+    if sort_by_total:
+        data = data.sort_values("total_completed", ascending=False).reset_index()
+    plt.plot_size((10 * len(data.class_) - 1 + 4), 50)
+    plt.stacked_bar(
+        data.class_,
+        [data.newbie_completed, data.intro_completed, data.regular_completed],
+        label=["Newbie", "Intro", "Regular"],
+        width=0.6,
+    )
+    plt.ylim(0, max(data.total_completed) * 1.1)
+    plt.theme("pro")
+    plt.title("Average Bites completed by class")
     plt.show()
 
 
