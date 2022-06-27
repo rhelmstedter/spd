@@ -75,7 +75,7 @@ def plot(
     plt.bar(data.class_, data.total_completed, orientation="h", width=0.3, marker="fhd")
     plt.theme("pro")
     plt.plot_size(75, (2 * len(data.class_) - 1) + 4)
-    plt.title("Average Bites completed by class")
+    plt.title("Average Bites Completed by Class")
     plt.xlim(0, max(data.total_completed) * 1.1)
     plt.show()
 
@@ -113,7 +113,7 @@ def stacked(
     )
     plt.ylim(0, max(data.total_completed) * 1.2)
     plt.theme("pro")
-    plt.title("Average Bites completed by class")
+    plt.title("Average Bites Completed by Class")
     plt.show()
 
 
