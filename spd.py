@@ -36,7 +36,7 @@ def write_csv(
     json_path = location.resolve() / json_file
     csv_path = location.resolve() / csv_file
     if csv_path.is_file():
-        print(f"[yellow]:warning: File already exists @ {csv_path}.")
+        print(f"[yellow]:warning: File already exists @ [/yellow]{csv_path}.")
         if not Confirm.ask("Do you want to overwrite the file?"):
             print("Exiting without creating a csv.")
             return
@@ -66,7 +66,7 @@ def plot(
 ) -> None:
     """Plots average number of bites completed by class"""
     csv_path = location.resolve() / csv_file
-    data = clean_data(csv_path)
+    data = _clean_data(csv_path)
     if sort_by_average:
         data = data.sort_values("total_completed", ascending=True).reset_index()
     else:
@@ -101,7 +101,7 @@ def stacked(
 ) -> None:
     """Plots average number of bites completed by class"""
     csv_path = location.resolve() / csv_file
-    data = clean_data(csv_path)
+    data = _clean_data(csv_path)
     if sort_by_average:
         data = data.sort_values("total_completed", ascending=False).reset_index()
     plt.plot_size((10 * len(data.class_) - 1 + 4), 30)
@@ -117,7 +117,7 @@ def stacked(
     plt.show()
 
 
-def clean_data(csv_path: Path) -> pd.DataFrame:
+def _clean_data(csv_path: Path) -> pd.DataFrame:
     """Creates a pandas DataFrame from a csv file.
 
     :csv_path: Path to csv file

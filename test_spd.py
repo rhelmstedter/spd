@@ -3,7 +3,7 @@ import os
 import json
 from pathlib import Path
 
-from spd import write_csv, plot, clean_data
+from spd import write_csv, plot, _clean_data
 
 TEST_JSON = [
     {
@@ -62,6 +62,6 @@ def test_clean_data(tmp_path):
     csv_file = 'test_csv.csv'
     with open(d / csv_file, 'w') as f:
         f.write(TEST_CSV.strip('\n'))
-    testing_data = clean_data(d / csv_file)
+    testing_data = _clean_data(d / csv_file)
     assert len(testing_data) == 1 # filters out the DEA
     assert testing_data.iloc[0]['total_completed'] == 11 # does the correct assinment for df.total_completed
