@@ -2,3 +2,4 @@ student_data.json
 student_data.csv
 .DS_Store
 __pycache__
+.python-version
