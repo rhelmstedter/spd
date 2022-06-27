@@ -8,19 +8,19 @@ I began learning everything I could about Python. I started listening to podcast
 
 Somewhere along the line I, ambitiously (read: what was I thinking?), decided that I was going to print student certificates and display them on the wall.
 
-![student certificates](./assets/student_certificates.jpeg)
+![student certificates](https://raw.githubusercontent.com/rhelmstedter/spd/main/assets/student_certificates.jpeg)
 
 This devolved into a painful process of hapless searching and clicking. First, students are sorted by when they joined the platform, not alphabetical order. Second, their name is built off of their email which makes it difficult to scan quickly (but at least there is `Ctrl + F`). Then, after located the student's profile the school admin dashboard it was a click to open their profile, click to choose the certificate (newbie, intro, etc...), click to open the certificate, click the print button (or `Ctrl + P`) to open print dialog, click print to print, click to close certificate tab (or `Ctrl + W`), click to close student profile tab. When dealing with one student at a time, not too bad. But with over 130 students at 7 clicks each and possibly doing this for multiple certificates, it adds up quickly. (You know I couldn't resist doing the calculations right? For 130 students earning a newbie and an intro certificate: 130 * 7 * 2 = 1820 clicks.)
 
 In addition to this, there was the matter of grading. I decided to make assignments for completing the newbie bites, intro bites, and some regular bites. This entailed heading back to the school admin dashboard and parsing the list of students again which looked like the figure below. Each row contains the class, the student name, and all of bites the student has at least attempted followed by an emoji that indicates whether the student had attempted (🔄), completed (👏), or looked at the solution (🤔). How do I know how many of which bites the student has completed? I had to count by hand. To make matters worse, these are listed in the order of attempt, not numerically. If a student went out of order (and trust me, they do) I and to slow down and make sure they weren't missing any. Having my first experience to code being Automate the boring stuff and after watching [Raymond Hettinger pound the table](https://www.youtube.com/watch?v=UANN2Eu6ZnM&t=434s), I thought, _there must be a better way_.
 
-![sanitized student data](./assets/sanitized_student_data.png)
+![sanitized student data](https://raw.githubusercontent.com/rhelmstedter/spd/main/assets/sanitized_student_data.png)
 
-## The solution
+## The Solution
 
 Enter python. I reached out to Bob and asked if he could create a way to export student data into a form that was easier to parse at scale. Boy did he deliver. He added the most beautiful button I have ever seen.
 
-![dspd button](./assets/dspd_button.png)
+![dspd button](https://raw.githubusercontent.com/rhelmstedter/spd/main/assets/dspd_button.png)
 
 It allows me to download all my students' data as JSON. For each student it provides the following information:
 
@@ -45,7 +45,7 @@ All of the code presented here is located in the [student PyBites data (spd) git
 
 ### The Libraries
 
-```python3
+```python
 from pathlib import Path
 
 import pandas as pd
@@ -59,7 +59,7 @@ from rich.prompt import Confirm
 
 ### Writing to CSV
 
-```python3
+```python
 
 CWD = Path.cwd()
 
@@ -105,10 +105,10 @@ The tool starts by creating a variable for the CWD and uses that by default. The
 
 The first command is `write_csv`. It takes in a location (directory), a JSON file name (to read), and a CSV file name (to write). For both the `json_path` and `csv_path` objects I went `.resolve()`. This is probably overkill, but it resolves symlinks, notation such as `~/path/to/location` and `../assets/location`, and works on both windows and linix/unix platforms. It then checks if there already exists a file at `csv_path` and uses rich's `Confirm` to prevent the user from accidentally overwriting the data. Originally I converted the JSON to CSV using the built-in libraries and a for loop. But since I end up using pandas later anyway, it converts it in just two lines code. Finally, it displays the success message. Here is a screen shot:
 
-![write csv](./assets/writecsv.png)
+![write csv](https://raw.githubusercontent.com/rhelmstedter/spd/main/assets/writecsv.png)
 
 ### Cleaning Up the DataFrame
-```python3
+```python
 
 def _clean_data(csv_path: Path) -> pd.DataFrame:
     """Creates a pandas DataFrame from a csv file.
@@ -141,7 +141,7 @@ This is a helper function for the plotting command and you can not call it as pa
 
 ### Plotting the Data
 
-```python3
+```python
 
 @cli.command()
 def plot(
@@ -181,13 +181,13 @@ def plot(
 
 This is where the magic of plotting in the terminal happens. This command takes arguments of location, the CSV file name and a sorting option. The result of this function is a horizontal bar graph that displays the average number of bites completed by class. The `sort-by-average` option is sweet because sometimes I want to view my classes in chronological order and other times I want to sort them in order of performance. After some experimenting I realized that plotext plots the first row at the bottom of the horizontal chart, so if I want Period 1 on the top and I to reverse the `DataFrame`. Then I mostly lifted the plot from [plotext's own documentation](https://github.com/piccolomo/plotext/blob/master/readme/bar.md#horizontal-bar-plot). I did need to add the `plt.xlim()` to force the graph to start at 0, otherwise it gave a distorted view of data. There is a second function called `stacked()` that plots a stacked bar chart of the same data. It is pretty similar to this function so I won't discuss it here. But both graphs are shown below.
 
-![horizontal bar plot](./assets/hbarchart.png)
-![stacked bar plot](./assets/stackedbarchart.png)
+![horizontal bar plot](https://raw.githubusercontent.com/rhelmstedter/spd/main/assets/hbarchart.png)
+![stacked bar plot](https://raw.githubusercontent.com/rhelmstedter/spd/main/assets/stackedbarchart.png)
 
 
 ### Bonus: Sanitizing the Student Data to share
 
-```python3
+```python
 
 from pathlib import Path
 import json
@@ -218,6 +218,6 @@ Here is the little script I used to sanitize the data so I could share it with y
 
 ## Future Plans
 
-This was an fun project to put together. It solved a real problem I was facing and I got to mess around with plotting data, which I always love. Moving forward I want to find a way to streamline grading and printing of the certificates. For the certificates I have an idea of opening the URLs with `webbrowser` and then using [pyautogui](https://github.com/asweigart/pyautogui) to print them for me. Maybe split the list of certificates into individual columns with an addition column of "printed" for each. Printed could be a boolean letting me know if I have already printed that one. Grading will be more difficult. Our current student information system doesn't allow me to uploads grades via CSV. (Or any other format for that matter, I mean its 2022, c'mon man!)
+This was a fun project to put together. It solved a real problem I was facing and I got to mess around with plotting data, which I always love. Moving forward I want to find a way to streamline grading and printing of the certificates. For the certificates I have an idea of opening the URLs with `webbrowser` and then using [pyautogui](https://github.com/asweigart/pyautogui) to print them for me. Maybe split the list of certificates into individual columns with an addition column of "printed" for each. Printed could be a boolean letting me know if I have already printed that one. Grading will be more difficult. Our current student information system doesn't allow me to uploads grades via CSV. (Or any other format for that matter, I mean its 2022, c'mon man!)
 
 I want to give a huge shout out to Bob for giving me the option to download the data and encouraging me to write about it. If you have questions, comments, or suggestions for improvement please reach out. I am [@RHelmstedter](https://twitter.com/RHelmstedter) on Twitter or @Russell Helmstedter in the PyBites Slack Channel.
