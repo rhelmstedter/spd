@@ -1,5 +1,3 @@
-import csv
-import json
 from pathlib import Path
 
 import pandas as pd
@@ -9,6 +7,7 @@ from rich import print
 from rich.prompt import Confirm
 
 CWD = Path.cwd()
+
 cli = typer.Typer()
 
 
@@ -37,18 +36,13 @@ def write_csv(
     json_path = location.resolve() / json_file
     csv_path = location.resolve() / csv_file
     if csv_path.is_file():
-        print(f"[yellow]:warning: File already exists @ {csv_file}.")
+        print(f"[yellow]:warning: File already exists @ {csv_path}.")
         if not Confirm.ask("Do you want to overwrite the file?"):
             print("Exiting without creating a csv.")
             return
-    with open(json_path) as f:
-        data = json.load(f)
-    with open(csv_path, "w") as out:
-        writer = csv.writer(out)
-        writer.writerow(data[0].keys())
-        for row in data:
-            writer.writerow(row.values())
-        print(f"Successfully created csv file @ {csv_file}")
+    data = pd.read_json(json_path)
+    data.to_csv(csv_path)
+    print(f"Successfully created csv file @ {csv_path}")
 
 
 @cli.command()
