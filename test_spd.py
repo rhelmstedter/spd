@@ -1,7 +1,4 @@
-import pytest
-import os
 import json
-from pathlib import Path
 
 from spd import write_csv, plot, _clean_data
 
@@ -14,7 +11,7 @@ TEST_JSON = [
         "newbie_completed": 3,
         "intro_completed": 1,
         "regular_completed": 3,
-        "certificates": ""
+        "certificates": "",
     },
     {
         "name": "nottoday satan",
@@ -24,8 +21,8 @@ TEST_JSON = [
         "newbie_completed": 2,
         "intro_completed": 8,
         "regular_completed": 1,
-        "certificates": ""
-    }
+        "certificates": "",
+    },
 ]
 
 TEST_CSV = """
@@ -38,19 +35,19 @@ nottoday satan,nottoday.satan@pibites.org,period 2,https://codechalleng.es/profi
 def test_csv_writer(tmp_path):
     d = tmp_path / "testing_dir"
     d.mkdir()
-    json_file = 'test_data.json'
-    with open(d / json_file, 'w') as f:
+    json_file = "test_data.json"
+    with open(d / json_file, "w") as f:
         json.dump(TEST_JSON, f)
-    write_csv(location=d, json_file=json_file, csv_file='testing.csv')
-    assert (d / 'testing.csv').is_file()
+    write_csv(location=d, json_file=json_file, csv_file="testing.csv")
+    assert (d / "testing.csv").is_file()
 
 
 def test_plot(tmp_path, capfd):
     d = tmp_path / "testing_dir"
     d.mkdir()
-    csv_file = 'test_csv.csv'
-    with open(d / csv_file, 'w') as f:
-        f.write(TEST_CSV.strip('\n'))
+    csv_file = "test_csv.csv"
+    with open(d / csv_file, "w") as f:
+        f.write(TEST_CSV.strip("\n"))
     plot(location=d, csv_file=csv_file)
     output = capfd.readouterr()[0].strip()
     assert "period 2" in output
@@ -59,9 +56,11 @@ def test_plot(tmp_path, capfd):
 def test_clean_data(tmp_path):
     d = tmp_path / "testing_dir"
     d.mkdir()
-    csv_file = 'test_csv.csv'
-    with open(d / csv_file, 'w') as f:
-        f.write(TEST_CSV.strip('\n'))
+    csv_file = "test_csv.csv"
+    with open(d / csv_file, "w") as f:
+        f.write(TEST_CSV.strip("\n"))
     testing_data = _clean_data(d / csv_file)
-    assert len(testing_data) == 1 # filters out the DEA
-    assert testing_data.iloc[0]['total_completed'] == 11 # does the correct assinment for df.total_completed
+    assert len(testing_data) == 1  # filters out the DEA
+    assert (
+        testing_data.iloc[0]["total_completed"] == 11
+    )  # does the correct assinment for df.total_completed
